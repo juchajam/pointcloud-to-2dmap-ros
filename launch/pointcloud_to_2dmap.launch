@@ -1,0 +1,23 @@
+<launch>
+    <arg name="input_pcd" />
+    <arg name="dest_directory" />
+    <arg name="resolution" default="0.05" />
+    <arg name="map_width" default="4096" />
+    <arg name="map_height" default="3072" />
+    <arg name="min_points_in_pix" default="1" />
+    <arg name="max_points_in_pix" default="5" />
+    <arg name="min_height" default="-0.1" />
+    <arg name="max_height" default="1.5" />
+
+    <node pkg="pointcloud_to_2dmap" type="pointcloud_to_2dmap" name="pointcloud_to_2dmap" output="screen">
+        <param name="input_pcd" value="$(arg input_pcd)" type="str" />
+        <param name="dest_directory" value="$(arg dest_directory)" type="str" />
+        <param name="resolution" value="$(arg resolution)" type="double" />
+        <param name="map_width" value="$(arg map_width)" type="int" />
+        <param name="map_height" value="$(arg map_height)" type="int" />
+        <param name="min_points_in_pix" value="$(arg min_points_in_pix)" type="int" />
+        <param name="max_points_in_pix" value="$(arg max_points_in_pix)" type="int" />
+        <param name="min_height" value="$(arg min_height)" type="double" />
+        <param name="max_height" value="$(arg max_height)" type="double" />
+    </node>
+</launch>
