@@ -37,12 +37,12 @@ class MapGenerater:
         cv2.imwrite(os.path.join(dest_directory, "map.png"), self.map)
 
         with open(os.path.join(dest_directory, "map.yaml"), "w") as f:
-            f.write("image: map.png")
-            f.write(f"resolution: {self.resolution}")
-            f.write(f"origin: [{-self.resolution * self.map_width / 2}, {-self.resolution * self.map_height / 2}, 0.0]")
-            f.write("occupied_thresh: 0.5")
-            f.write("free_thresh: 0.2")
-            f.write("negate: 0")
+            f.write("image: map.png\n")
+            f.write(f"resolution: {self.resolution}\n")
+            f.write(f"origin: [{-self.resolution * self.map_width / 2}, {-self.resolution * self.map_height / 2}, 0.0]\n")
+            f.write("occupied_thresh: 0.5\n")
+            f.write("free_thresh: 0.2\n")
+            f.write("negate: 0\n")
     
     def run(self):
         cloud = pcl.load(self.input_pcd)
