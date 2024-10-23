@@ -3,7 +3,7 @@
 ## Usage
 > You must set input_pcd and dest_directory
 ```bash
-roslaunch pointcloud_to_2dmap pointcloud_to_2dmap.launch input_pcd:=path/to/file.pcd dest_directory:=path/to/destination/directory/
+ros2 launch pointcloud_to_2dmap pointcloud_to_2dmap.launch.py input_pcd:=path/to/file.pcd dest_directory:=path/to/destination/directory/
 ```
 
 ## ros parameters
