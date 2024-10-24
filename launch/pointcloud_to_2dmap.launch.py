@@ -33,14 +33,14 @@ def generate_launch_description():
                 description="Pixel resolution (meters / pix)",
             ),
             DeclareLaunchArgument(
-                "map_width", default_value="4096", description="Map width [pix]"
+                "map_width", default_value="1024", description="Map width [pix]"
             ),
             DeclareLaunchArgument(
-                "map_height", default_value="3072", description="Map height [pix]"
+                "map_height", default_value="1024", description="Map height [pix]"
             ),
             DeclareLaunchArgument(
                 "min_points_in_pix",
-                default_value="1",
+                default_value="2",
                 description="Min points in a occupied pix",
             ),
             DeclareLaunchArgument(
@@ -50,12 +50,12 @@ def generate_launch_description():
             ),
             DeclareLaunchArgument(
                 "min_height",
-                default_value="-0.1",
+                default_value="0.5",
                 description="Min height of clipping range",
             ),
             DeclareLaunchArgument(
                 "max_height",
-                default_value="1.5",
+                default_value="1.0",
                 description="Max height of clipping range",
             ),
             Node(

@@ -14,22 +14,16 @@ class MapGenerater : rclcpp::Node
 public:
   MapGenerater(rclcpp::NodeOptions options = rclcpp::NodeOptions())
   : Node("pointcloud_to_2dmap", options.allow_undeclared_parameters(true).automatically_declare_parameters_from_overrides(true))
-  {
-    ros::NodeHandle nh;
-    ros::NodeHandle nh_priv("~");
-    
-    this->declare_parameter("resolution", 0.1);
-    this->declare_parameter("map_width", 1024);
-    this->declare_parameter("map_height", 1024);
-    this->declare_parameter("min_points_in_pix", 2);
-    this->declare_parameter("max_points_in_pix", 5);
-    this->declare_parameter("min_height", 0.5);
-    this->declare_parameter("max_height", 1.0);
-    this->declare_parameter("dest_directory", "");
+  { 
+    if (!this->has_parameter("resolution")) this->declare_parameter("resolution", 0.1);
+    if (!this->has_parameter("map_width")) this->declare_parameter("map_width", 1024);
+    if (!this->has_parameter("map_height")) this->declare_parameter("map_height", 1024);
+    if (!this->has_parameter("min_points_in_pix")) this->declare_parameter("min_points_in_pix", 2);
+    if (!this->has_parameter("max_points_in_pix")) this->declare_parameter("max_points_in_pix", 5);
+    if (!this->has_parameter("min_height")) this->declare_parameter("min_height", 0.5);
+    if (!this->has_parameter("max_height")) this->declare_parameter("max_height", 1.0);
 
-    std::string input_pcd, dest_directory;
-
-    if this->get_parameter("resolution", resolution)
+    this->get_parameter("resolution", resolution);
     m2pix = 1.0 / resolution;
     map_width = this->get_parameter("map_width").as_int();
     map_height = this->get_parameter("map_height").as_int();
@@ -37,31 +31,29 @@ public:
     max_points_in_pix = this->get_parameter("max_points_in_pix").as_int();
     min_height = this->get_parameter("min_height").as_double();
     max_height = this->get_parameter("max_height").as_double();
-    dest_directory = this->get_parameter("").as_string();
 
 
-    if(this->get_parameter("input_pcd", input_pcd)!=true)
+    if(!this->get_parameter("input_pcd", input_pcd))
     {
       RCLCPP_ERROR(this->get_logger(), "input_pcd param is not set.");
       rclcpp::shutdown();
     }
     
 
-    if (!nh_priv.getParam("dest_directory", dest_directory))
+    if (!this->get_parameter("dest_directory", dest_directory))
     {
       RCLCPP_ERROR(this->get_logger(), "dest_directory param is not set.");
       rclcpp::shutdown();
     }
 
-    RCLCPP_INFO_STREAM(this->get_logger(), "input_pcd     :" << input_pcd << std::endl 
-                                        << "dest_directory:" << dest_directory << std::endl
-                                        << "resolution    :" << resolution << std::endl);
+    RCLCPP_INFO_STREAM(this->get_logger(), "input_pcd     :" << input_pcd);
+    RCLCPP_INFO_STREAM(this->get_logger(), "dest_directory:" << dest_directory);
+    RCLCPP_INFO_STREAM(this->get_logger(), "resolution    :" << resolution);
 
-    
-    cloud = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
-    if(pcl::io::loadPCDFile(input_pcd, *cloud))
+    cloud_ = std::make_shared<pcl::PointCloud<pcl::PointXYZ>>();
+    if(pcl::io::loadPCDFile(input_pcd, *cloud_))
     {
-      RCLCPP_ERROR("failed to open the input cloud");
+      RCLCPP_ERROR(this->get_logger(), "failed to open the input cloud");
       rclcpp::shutdown();
     }
   }
@@ -96,7 +88,7 @@ public:
 
   void run()
   {
-    cv::Mat map = generater.generate(*cloud);
+    cv::Mat map = generate(*cloud_);
 
     if(!std::filesystem::exists(dest_directory))
     {
@@ -113,7 +105,7 @@ public:
     ofs << "free_thresh: 0.2" << std::endl;
     ofs << "negate: 0" << std::endl;
 
-    RCLCPP_INFO("Finish converting point cloud to 2d map.");
+    RCLCPP_INFO(this->get_logger(), "Finish converting point cloud to 2d map.");
   }
 
 public:
@@ -127,7 +119,10 @@ public:
   double min_height;
   double max_height;
 
-  std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> cloud;
+  std::string input_pcd;
+  std::string dest_directory;
+
+  std::shared_ptr<pcl::PointCloud<pcl::PointXYZ>> cloud_;
 };
 
 
@@ -135,7 +130,7 @@ int main(int argc, char** argv)
 {
   rclcpp::init(argc, argv);
 
-  MapGenerater generater();
+  MapGenerater generater;
   generater.run();
 
   rclcpp::shutdown();
